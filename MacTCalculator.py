@@ -2,11 +2,11 @@ import os
 import math
 clear = lambda: os.system('clear')
 
-pi = 3.14159265359
+pi = math.pi
 # divide menu sections
 line = 70
-trig = 35
-eX = 35
+trig = 40
+eX = 40
 
 def main():
     playerName = input('Please enter your name to begin: ')
@@ -41,6 +41,8 @@ def main():
 def Calc(playerName):
     calcMenu = 0
     while calcMenu != 8:
+        computedResult = 0.0
+        n = 0
         num = 0
         type = ' '
         print("-"*line)
@@ -58,216 +60,183 @@ def Calc(playerName):
             print("*"*eX)
         
         if calcMenu == 1:
-            try:
-                num = Constant(Convert(input('Enter your desired value (sin x): ')))
-                type = str(input('Enter the unit of angle (deg or rad): '))
-            except ValueError:
-                print('Error ... Invalid input. Try again.')
-            except ZeroDivisionError:
-                print('Error ... Attempted division by zero. Try again.')
+            num, type = Prompt(calcMenu, num, type)
             # user's string input only allows for degree and radian units
             if type in ["deg", "rad"]:
-                sin(num, type, 0)
+                sin(num, type, n, computedResult)
+            elif type == ' ':
+                continue
             else:
                 print('Error ... Invalid unit of angle. Try again.')
 
         elif calcMenu == 2:
-            try:
-                num = input('Enter your desired value (cos x): ')
-                num = Convert(num)
-                type = str(input('Enter the unit of angle (deg or rad): '))
-            except ValueError:
-                print('Error ... Invalid input. Try again.')
-            except ZeroDivisionError:
-                print('Error ... Attempted division by zero. Try again.')
+            num, type = Prompt(calcMenu, num, type)
             # user's string input only allows for degree and radian units
             if type in ["deg", "rad"]:
-                cos(num, type, 0)
+                cos(num, type, n, computedResult)
+            elif type == ' ':
+                continue
             else:
                 print('Error ... Invalid unit of angle. Try again.')
 
         elif calcMenu == 3:
-            try:
-                num = input('Enter your desired value (tan x): ')
-                num = Convert(num)
-                type = str(input('Enter the unit of angle (deg or rad): '))
-            except ValueError:
-                print('Error ... Invalid input. Try again.')
-            except ZeroDivisionError:
-                print('Error ... Attempted division by zero. Try again.')
+            num, type = Prompt(calcMenu, num, type)
             # user's string input only allows for degree and radian units
             if type in ["deg", "rad"]:
-                tan(num, type)
+                tan(num, type, n, computedResult)
+            elif type == ' ':
+                continue
             else:
                 print('Error ... Invalid unit of angle. Try again.')
 
         elif calcMenu == 4:
-            try:
-                num = input('Enter your desired value (arctan x): ')
-                num = Convert(num)
-                type = str(input('Enter the unit of angle (deg or rad): '))
-            except ValueError:
-                print('Error ... Invalid input. Try again.')
-            except ZeroDivisionError:
-                print('Error ... Attempted division by zero. Try again.')
+            num, type = Prompt(calcMenu, num, type)
             # user's string input only allows for degree and radian units
             if type in ["deg", "rad"]:
-                arctan(num, type)
+                arctan(num, type, n, computedResult)
+            elif type == ' ':
+                continue
             else:
                 print('Error ... Invalid unit of angle. Try again.')
 
         elif calcMenu == 5:
-            try:
-                num = input('Enter your desired value (e^x): ')
-                num = Convert(num)
-            except ValueError:
-                print('Error ... Invalid input. Try again.')
-            except ZeroDivisionError:
-                print('Error ... Attempted division by zero. Try again.')
-            e(num)
+            num, type = Prompt(calcMenu, num, type)
+            if type == ' ':
+                e(num, n, computedResult)
             
         elif calcMenu == 6 or calcMenu == 7:
-            try:
-                num = input('Enter your desired value (ln 1 ± x): ')
-                num = Convert(num)
-            except ValueError:
-                print('Error ... Invalid input. Try again.')
-            except ZeroDivisionError:
-                print('Error ... Attempted division by zero. Try again.')
-            ln(num, calcMenu)
+            num, type = Prompt(calcMenu, num, type)
+            if type == ' ':
+                ln(num, calcMenu, n, computedResult)
 
         elif calcMenu == 8:
             print('Returning to Main Menu ...')
+
+def Prompt(calcMenu, num, type):
+    try:
+        num = eval(input('Enter your desired value: '))
+        if calcMenu in [1, 2, 3, 4]:
+            type = input('Enter the unit of angle (deg or rad): ')
+    except ValueError:
+        print('Error ... Invalid input. Try again.')
+    except ZeroDivisionError:
+        print('Error ... Attempted division by zero. Try again.')
+        if calcMenu in [5, 6, 7]:
+            type = 0
+
+    return num, type
 
 #The trig functions take a number then the unit of that number "rad" or "deg" after a comma
 # Ex sin(45,"deg"), tan(pi/3,"rad")
 
 #function for sin 
-def sin (num, type, n):
-    #create values to compare or add too
-    computed_result = 0.0
-    n = 0
+def sin (num, type, n, computedResult):
+
     if type == "deg":
-        num = (num * pi)/180
+        num = (num * math.pi)/180
     #Used only to get comparable result
     result = math.sin(num)
-    while computed_result <= result - 0.00001 or computed_result >= result + .00001:
-        computed_result += ((-1) ** n) * (num ** (2 * n+1))/math.factorial(2 * n+1)
+    while computedResult <= result - 0.00001 or computedResult >= result + .00001:
+        computedResult += ((-1) ** n) * (num ** (2 * n+1))/math.factorial(2 * n+1)
         n += 1
 
     print("~"*trig)
-    print(f"\nsin({num}) =", computed_result)
+    print(f"sin({num}) =", computedResult)
     print(f"After {n} term(s) of its Maclaurin expansion it is less than\
             \nor equal to the correct answer, within a 0.00001 ERROR")
     
-    return computed_result, n
+    return n, computedResult
 
-def cos(num, type, n):
-    #create values to compare or add too
-    computed_result = 0.0
-    n = 0
+def cos(num, type, n, computedResult):
     if type == "deg":
-        num = (num * pi)/180
+        num = (num * math.pi)/180
     result = math.cos(num)
-    while computed_result <= result - 0.00001 or computed_result >= result + .00001:
-        computed_result += ((-1) ** n) * (num ** (2 * n))/math.factorial(2 * n)
+    while computedResult <= result - 0.00001 or computedResult >= result + .00001:
+        computedResult += ((-1) ** n) * (num ** (2 * n))/math.factorial(2 * n)
         n += 1
 
     print("~"*trig)
-    print(f"\ncos({num}) =", computed_result)
+    print(f"cos({num}) =", computedResult)
     print(f"After {n} term(s) of its Maclaurin expansion it is less than\
             \nor equal to the correct answer, within a 0.00001 ERROR")
 
-    return computed_result, n
+    return n, computedResult
 
-def tan(num, type):
-    #create values to compare or add too
-    n = 0
+def tan(num, type, n, computedResult):
     # deg to rad conversion is not included as it is done in the sin and cos functions
     result = math.tan(num)
-    while computed_result <= result - 0.00001 or computed_result >= result + .00001:
-        computed_result = sin(num, type, n) / cos(num, type, n)
-        n += 1
+    try:
+        while computedResult <= result - 0.00001 or computedResult >= result + .00001:
+            computedResult = tuple(x / y for x, y in zip(sin(num, type, n), cos(num, type, n)))
+            n += 1
 
-    print("~"*trig)
-    print(f"\ntan({num}) =", computed_result)
-    print(f"After {n} term(s) of its Maclaurin expansion it is less than\
-            \nor equal to the correct answer, within a 0.00001 ERROR")
+        print("~"*trig)
+        print(f"tan({num}) =", computedResult)
+        print(f"After {n} term(s) of its Maclaurin expansion it is less than\
+                \nor equal to the correct answer, within a 0.00001 ERROR")
 
-def arctan(num, type):
-    computed_result = 0.0
-    n = 0
+    except ZeroDivisionError:
+        print('The result is undefined.')
+
+    return n, computedResult
+
+def arctan(num, type, n, computedResult):
     if type == "deg":
-        num = (num * pi)/180
+        num = (num * math.pi)/180
     #Used only to get comparable result
     result = math.atan(num)
-    while computed_result <= result - 0.00001 or computed_result >= result + .00001:
-        computed_result += ((-1) ** n) * (num ** (2 * n+1)) / (2 * n+1)
+    while computedResult <= result - 0.00001 or computedResult >= result + .00001:
+        computedResult += ((-1) ** n) * (num ** (2 * n+1)) / (2 * n+1)
         n += 1 
 
     print("~"*trig)
-    print(f"\narctan({num}) =", computed_result)
+    print(f"arctan({num}) =", computedResult)
     print(f"After {n} term(s) of its Maclaurin expansion it is less than\
             \nor equal to the correct answer, within a 0.00001 ERROR")
     
-def e(num):
-    computed_result = 0.0
-    n = 0
+def e(num, n, computedResult):
     #Used only to get comparable result 
     result = math.e**(num)
-    while computed_result <= result - 0.00001 or computed_result >= result + .00001:
-        computed_result += (num**(n))/math.factorial(n)
+    while computedResult <= result - 0.00001 or computedResult >= result + .00001:
+        computedResult += (num**(n))/math.factorial(n)
         n += 1
 
     print("*"*eX)
-    print(f"\ne^{num} =", computed_result)
+    print(f"e^{num} =", computedResult)
     print(f"After {n} term(s) of its Maclaurin expansion it is less than\
             \nor equal to the correct answer, within a 0.00001 ERROR")
 
-def ln(num, calcMenu):
-    computed_result = 0.0
+def ln(num, calcMenu, n, computedResult):
     n = 1
     if calcMenu == 6:
-        #Used only to get comparable result 
-        result = math.log1p(num)
-        while computed_result <= result - 0.00001 or computed_result >= result + .00001:
-            computed_result += ((-1) ** (n + 1)) * (num ** n) / n
-            print(computed_result)
-            n += 1
+        try: 
+            result = math.log1p(num)
+            while computedResult <= result - 0.00001 or computedResult >= result + .00001:
+                computedResult += ((-1) ** (n + 1)) * (num ** n) / n
+                n += 1
 
-        print("*"*eX)
-        print(f"\nln(1 + {num}) =", computed_result)
-        print(f"After {n} term(s) of its Maclaurin expansion it is less than\
-                \nor equal to the correct answer, within a 0.00001 ERROR")
+            print("*"*eX)
+            print(f"ln(1 + {num}) =", computedResult)
+            print(f"After {n} term(s) of its Maclaurin expansion it is less than\
+                    \nor equal to the correct answer, within a 0.00001 ERROR")
+        
+        except ValueError:
+            print('The result is undefined.')
 
     elif calcMenu == 7:
-        result = math.log(1-num)
-        while computed_result <= result - 0.00001 or computed_result >= result + .00001:
-            computed_result += -(num ** n) / n
-            print(computed_result)
-            n += 1
-        
-        print("*"*eX)
-        print(f"\nln(1 - {num}) =", computed_result)
-        print(f"After {n} term(s) of its Maclaurin expansion it is less than\
-                \nor equal to the correct answer, within a 0.00001 ERROR")
+        try:
+            result = math.log(1-num)
+            while computedResult <= result - 0.00001 or computedResult >= result + .00001:
+                computedResult += -(num ** n) / n
+                n += 1
+            
+            print("*"*eX)
+            print(f"ln(1 - {num}) =", computedResult)
+            print(f"After {n} term(s) of its Maclaurin expansion it is less than\
+                    \nor equal to the correct answer, within a 0.00001 ERROR")
 
-# let user input fractions and convert to actual values
-def Convert(num):
-    if '/' not in str(num):
-        return float(num)
-    else:
-        fract = num.split('/')
-        return float(fract[0])/float(fract[1])
-
-# these two functions ^ v have to be merged somehow to allow for fractions to work as well as "pi" be recognized as an input
-
-def Constant(num):
-    constants = {"pi": pi, "e": 2.718281828}
-    if num in constants:
-        return constants[num]
-    else:
-        return float(num)
+        except ValueError:
+            print('The result is undefined.')
 
 # separate function if more math functions added
 def FunctionList():
@@ -323,13 +292,13 @@ def ShowLearn():
 def Special():
     print("-"*line)
     print("This program orignally began as an optional route for a Calculus II\
-           \nproject, but I plan to integrate this into a framework\
-           \n and proper web application.\
+           \nproject, but I plan to integrate this into a framework and\
+           \nproper web application.\
            \n\
-           \nSpecial thanks to Antoine for designing some of the functions\
-           \nand their Maclaurin series, and Alex for the numerous study\
-           \nsessions we had during the semester. I could not have\
-           \npassed Calculus without you guys!")
+           \nSpecial thanks to Antoine for designing some of the functions and\
+           \ntheir Maclaurin series, as well as Alex and Quan for the numerous\
+           \nstudy sessions we had during the semester. I could not have passed\
+           \nCalculus without you guys!")
 
 if __name__ == '__main__':
     main()
