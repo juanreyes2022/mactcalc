@@ -1,6 +1,5 @@
 import os
 import math
-from decimal import Decimal
 clear = lambda: os.system('clear')
 
 pi = math.pi
@@ -12,6 +11,7 @@ errAng = 'Error ... Invalid unit of angle. Try again.'
 errIn = 'Error ... Invalid input. Try again.'
 err0 = 'Error ... Attempted division by zero. Try again.'
 und = 'The result is undefined.'
+over = 'Value exceeds domain of the function.'
 
 def main():
     playerName = input('Please enter your name to begin: ')
@@ -52,11 +52,6 @@ def main():
 def Calc(playerName):
     calcMenu = 0
     while calcMenu not in ['Q', 'q']:
-        # initialize result, nth term of the series, unit type
-        computedResult = 0
-        n = 0
-        num = 0
-        type = ' '
         print("-"*line)
         # easier way to alter list
         FunctionList()
@@ -65,77 +60,146 @@ def Calc(playerName):
             calcMenu = input('\n' + str(playerName) + ', please select one of the options above: ')
         except ValueError:
             print(errMen)
-
-        # different symbols for distinct groups of functions (i.e. trig, exp, log, geometric)
-        if calcMenu in [1, 2, 3, 4, 5, 6]:
-            print("~"*line)
-        elif calcMenu in [7, 8, 9, 10, 11, 12]:
-            print("*"*line)
         
         if calcMenu == '1':
-            num, type = Prompt(calcMenu, num, type)
+            Trig(playerName)
+        elif calcMenu == '2':
+            ExpLog(playerName)
+        elif calcMenu == '3':
+            Geo(playerName)
+        elif calcMenu in ['Q', 'q']:
+            print('Returning to Main Menu ...')
+
+def Trig(playerName):
+    trigMenu = 0
+    while trigMenu not in ['Q', 'q']:
+        computedResult = 0
+        n = 0
+        num = 0
+        type = None    
+        TrigList()
+
+        try:
+            trigMenu = input('\n' + str(playerName) + ', please select one of the options above: ')
+        except ValueError:
+            print(errMen)
+
+        print("~"*line)
+        
+        if trigMenu == '1':
+            num, type = Prompt(trigMenu, num, type)
             # user's string input only allows for degree and radian units
             if type in ["deg", "rad"]:
                 n, computedResult = sin(num, type, n, computedResult)
                 print("~"*line)
                 print(f"sin({num}) =", computedResult)
                 nCompare(n)
-            elif type in [' ', 0]:
+            elif type in [None, 0]:
                 continue # to prevent multipe error messages from printing
             else:
                 print(errAng)
 
-        elif calcMenu == '2':
-            num, type = Prompt(calcMenu, num, type)
+        elif trigMenu == '2':
+            num, type = Prompt(trigMenu, num, type)
             if type in ["deg", "rad"]:
                 n, computedResult = cos(num, type, n, computedResult)
                 print("~"*line)
                 print(f"cos({num}) =", computedResult)
                 nCompare(n)
-            elif type in [' ', 0]:
+            elif type in [None, 0]:
                 continue
             else:
                 print(errAng)
 
-        elif calcMenu == '3':
-            num, type = Prompt(calcMenu, num, type)
+        elif trigMenu == '3':
+            num, type = Prompt(trigMenu, num, type)
             if type in ["deg", "rad"]:
                 tan(num, type, n, computedResult)      
-            elif type in [' ', 0]:
+            elif type in [None, 0]:
                 continue
             else:
                 print(errAng)
 
-        elif calcMenu == '4':
-            num, type = Prompt(calcMenu, num, type)
+        # elif calcMenu == '4': arcsin()
+            
+        # elif calcMenu == '5': arccos()
+            
+        elif trigMenu == '6':
+            num, type = Prompt(trigMenu, num, type)
             # output is in radians so type remains unspecified
-            if type == ' ':
+            if type == None:
                 n, computedResult = arctan(num, n, computedResult)
-                
-        elif calcMenu == '5':
-            # exp and log do not use angles as inputs
-            num, type = Prompt(calcMenu, num, type)
-            if type == ' ':
-                n, computedResult = e(num, n, computedResult)
-                print("~"*line)
-                print(f"e^({num}) =", computedResult)
+
+        elif trigMenu in ['Q', 'q']:
+            print('Returning to Function Menu ...')
+
+def ExpLog(playerName):
+    expLogMenu = 0
+    while expLogMenu not in ['Q', 'q']:
+        # initialize result, nth term of the series, unit type
+        computedResult = 0
+        n = 0
+        num = 0
+        type = None # exp and log do not use angles as inputs
+        ExpLogList()
+
+        try:
+            expLogMenu = input('\n' + str(playerName) + ', please select one of the options above: ')
+        except ValueError:
+            print(errMen)
+        
+        if expLogMenu == '1':
+            num, type = Prompt(0, num, type)
+            if type == None:
+                n = e(num, n, computedResult)
                 nCompare(n)
             
-        elif calcMenu == '6' or calcMenu == '7':
-            num, type = Prompt(calcMenu, num, type)
-            if type == ' ':
-                n = ln(num, calcMenu, n, computedResult)
+        elif expLogMenu in ['2', '3']:
+            num, type = Prompt(0, num, type)
+            if type == None:
+                n = ln(num, expLogMenu, n, computedResult)
+                print("*"*line)
+                if expLogMenu == '2':
+                    print(f"ln(1 + {num}) =", computedResult)
+                elif expLogMenu == '3':
+                    print(f"ln(1 - {num}) =", computedResult)
                 nCompare(n)
 
-        elif calcMenu in ['Q', 'q']:
-            print('Returning to Main Menu ...')
+        # elif expLogMenu == '4' 1+x / 1-x
+
+        elif expLogMenu in ['Q', 'q']:
+            print('Returning to Function Menu ...')
+
+def Geo(playerName):
+    geoMenu = 0
+    while geoMenu not in ['Q', 'q']:
+        # initialize result, nth term of the series, unit type
+        computedResult = 0
+        n = 0
+        num = 0
+        type = None
+        GeoList()
+
+        try:
+            geoMenu = input('\n' + str(playerName) + ', please select one of the options above: ')
+        except ValueError:
+            print(errMen)
+        
+        # if geoMenu == '1': 1/1-x
+            
+        # elif expLogMenu == '2' derivative of 1
+
+        # elif expLogMenu == '3' derivative of 2
+
+        if geoMenu in ['Q', 'q']:
+            print('Returning to Function Menu ...')
 
 # prompt user for the input value and, if applicable,
 # the unit of angle
-def Prompt(calcMenu, num, type):
+def Prompt(trigMenu, num, type):
     try:
         num = eval(input('Enter your desired value: '))
-        if calcMenu in ['1', '2', '3']: # trig functions
+        if trigMenu in ['1', '2', '3']: # trig functions
             type = input('Enter the unit of angle (deg or rad): ')
     except (ValueError, SyntaxError, NameError):
         print(errIn)
@@ -198,29 +262,34 @@ def arctan(num, n, computedResult):
             # maclaurin of inverse tangent
             computedResult += ((-1) ** n) * (num ** (2 * n + 1)) / (2 * n + 1)
             n += 1
+
         print("~"*line)
         print(f"arctan({num}) =", computedResult)
         nCompare(n)
     except OverflowError: # domain of the series is |x| < 1
-        print("Value exceeds domain of the function.")
+        print(over)
 
     return n, computedResult
-##### nonetype error? #####
+
 def e(num, n, computedResult):
-    #Used only to get comparable result 
     result = math.e**(num)
     while computedResult <= result - 0.00001 or computedResult >= result + .00001:
         # maclaurin for e^x
         computedResult += (num ** (n)) / math.factorial(n)
         n += 1
-##### print in here doesn't display? #####
-def ln(num, calcMenu, n, computedResult):
-    # series does not use the first term
+
+    print("~"*line)
+    print(f"e^({num}) =", computedResult)
+
+    return n
+
+def ln(num, expLogMenu, n, computedResult):
+    # series cannot use the first term
     n = 1
     # maclaurin for ln(x) does not exist because the derivative of the function,
     # 1/x, is undefined at x = 0, which is the point a maclaurin series centers around
     # the log must be shifted to the left or right to fix this issue
-    if calcMenu == 6:
+    if expLogMenu == '2':
         try: 
             result = math.log1p(num)
             while computedResult <= result - 0.00001 or computedResult >= result + .00001:
@@ -228,13 +297,14 @@ def ln(num, calcMenu, n, computedResult):
                 computedResult += ((-1) ** (n + 1)) * (num ** n) / n
                 n += 1
 
-            print("*"*line)
-            print(f"ln(1 + {num}) =", computedResult)
-        # ln(0) is undefined
-        except ValueError:
+            return n
+        
+        except ValueError: # ln(0) is undefined
             print(und)
+        except OverflowError: # domain of the series is |x| < 1
+            print(over)
 
-    elif calcMenu == 7:
+    elif expLogMenu == '3':
         try:
             result = math.log(1-num)
             while computedResult <= result - 0.00001 or computedResult >= result + .00001:
@@ -242,17 +312,23 @@ def ln(num, calcMenu, n, computedResult):
                 computedResult += -(num ** n) / n
                 n += 1
             
-            print("*"*line)
-            print(f"ln(1 - {num}) =", computedResult)
-        # ln(0) is undefined
-        except ValueError:
+            return n
+        
+        except ValueError: # ln(0) is undefined
             print(und)
-
-    return n
+        except OverflowError: # domain of the series is |x| < 1
+            print(over)
 
 # easily alter list of available functions
 def FunctionList():
     print("Function Menu")
+    print("1. Trigonometric Functions\
+         \n2. Exponential/Logarithmic Functions\
+         \n3. Geometric Series\
+         \n\
+         \nTo return to the Main Menu, enter Q.")
+
+def TrigList():
     print("~"*line)
     print("Trigonometric Function Expansions:\
            \n1. sin x\
@@ -260,22 +336,28 @@ def FunctionList():
            \n3. tan x\
            \n4. arcsin x\
            \n5. arccos x\
-           \n6. arctan x")
-    print("~"*line)
+           \n6. arctan x\
+           \n\
+           \nTo return to the Function Menu, enter Q.")
+
+def ExpLogList():
     print("*"*line)
     print("Growth and Decay Function Expansions:\
-           \n7. e^x\
-           \n8. ln (1 + x)\
-           \n9. ln (1 - x)\
-           \n10. ln[(1+x)/(1-x)]")
-    print("*"*line)
+           \n1. e^x\
+           \n2. ln (1 + x)\
+           \n3. ln (1 - x)\
+           \n4. ln[(1+x)/(1-x)]\
+           \n\
+           \nTo return to the Function Menu, enter Q.")
+
+def GeoList():
     print("^"*line)
     print("Geometric Series Expansions:\
-           \n11. 1/(1-x)\
-           \n12. 1/(1-x)^2\
-           \n13. 1/(1-x)^3")
-    print("^"*line)
-    print("To return to the Main Menu, enter Q.")
+           \n1. 1/(1-x)\
+           \n2. 1/(1-x)^2\
+           \n3. 1/(1-x)^3\
+           \n\
+           \nTo return to the Function Menu, enter Q.")
 
 def ShowInfo():
     print("-"*line)
